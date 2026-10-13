@@ -634,8 +634,8 @@ body.reading #ink,body.reading #laz{display:none}
   <div class="simtag">Canevas</div>
   <div class="body tall"><div style="display:grid;grid-template-columns:1.35fr 1fr;gap:20px;height:100%">
     <div style="display:flex;flex-direction:column;gap:8px;min-width:0">
-      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:14px"><label for="cv-nom">Nom :</label><input type="text" id="cv-nom" style="width:170px;padding:5px 8px"><label for="cv-grp">Groupe :</label><input type="text" id="cv-grp" style="width:90px;padding:5px 8px"><span class="mut" style="font-size:12.5px">Réglages : « Bonjour » · HTTPS · Ethernet · Direct</span></div>
-      <table class="t" id="cv-tab" style="font-size:13.5px"><thead><tr><th style="width:17%">Couche</th><th style="width:20%">PDU</th><th>En-tête ajouté</th><th style="width:17%">Taille de sortie</th></tr></thead><tbody></tbody></table>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:14px"><label for="cv-nom">Nom :</label><input type="text" id="cv-nom" style="width:170px;padding:5px 8px"><label for="cv-grp">Groupe :</label><input type="text" id="cv-grp" style="width:90px;padding:5px 8px"><span class="mut" style="font-size:12.5px">Choisissez le nom de la PDU à chaque couche</span></div>
+      <table class="t" id="cv-tab" style="font-size:13.5px"><thead><tr><th style="width:55%">Couche</th><th>PDU (nom de l’unité de données)</th></tr></thead><tbody></tbody></table>
     </div>
     <div style="display:flex;flex-direction:column;gap:7px;min-width:0">
       <div id="cv-q" style="display:grid;gap:6px"></div>
@@ -3521,14 +3521,13 @@ ENTER.simTD=()=>{
 /* ---------- TD : canevas de vérification ---------- */
 ENTER.simCV=()=>{
   const PDU=['Données','Segment','Paquet','Trame','Bits'];
-  const HD=['Requête HTTP (ligne, en-têtes, corps)','En-tête TLS (5 octets)','Identifiant de session (4 octets)','En-tête TCP (20 octets)','En-tête IPv4 (20 octets)','En-tête Ethernet (14 o) + FCS (4 o)','Aucun : conversion en bits'];
-  const ROWS=[[7,'Application','Données',HD[0],142],[6,'Présentation','Données',HD[1],147],[5,'Session','Données',HD[2],151],[4,'Transport','Segment',HD[3],171],[3,'Réseau','Paquet',HD[4],191],[2,'Liaison','Trame',HD[5],209],[1,'Physique','Bits',HD[6],209]];
+  const ROWS=[[7,'Application','Données'],[6,'Présentation','Données'],[5,'Session','Données'],[4,'Transport','Segment'],[3,'Réseau','Paquet'],[2,'Liaison','Trame'],[1,'Physique','Bits']];
   const col=l=>l>=5?'cA':l===4?'cT':'cN';
   const opt=(a)=>'<option value="">…</option>'+a.map(x=>`<option>${x}</option>`).join('');
-  $('#cv-tab tbody').innerHTML=ROWS.map(r=>`<tr data-l="${r[0]}"><td style="padding:4px 6px"><span class="lay ${col(r[0])}" style="height:28px;font-size:13.5px;border-radius:14px 4px 4px 14px"><i style="width:22px;height:22px;font-size:13px">${r[0]}</i>${r[1]}</span></td><td style="padding:4px 6px"><select id="cv-p${r[0]}" aria-label="PDU couche ${r[0]}" style="width:100%;padding:5px;font-size:13.5px">${opt(PDU)}</select></td><td style="padding:4px 6px"><select id="cv-h${r[0]}" aria-label="En-tête couche ${r[0]}" style="width:100%;padding:5px;font-size:13.5px">${opt(HD)}</select></td><td style="padding:4px 6px"><input type="text" inputmode="numeric" id="cv-s${r[0]}" aria-label="Taille couche ${r[0]}" placeholder="octets" style="width:100%;padding:5px;font-size:13.5px"></td></tr>`).join('');
-  const Q=[['q1','Port de destination TCP avec HTTPS','t','443'],['q2','Port de destination TCP avec HTTP','t','80'],['q3','EtherType de la trame','s','0x0800 (IPv4)',['0x0800 (IPv4)','0x0806 (ARP)','0x86DD (IPv6)']],['q4','Octets ajoutés autour des 7 octets de « Bonjour »','t','202'],['q5','Ordre du 3-way handshake','s','SYN → SYN-ACK → ACK',['SYN → SYN-ACK → ACK','SYN → ACK → SYN-ACK','ACK → SYN → FIN']],['q6','Ordre de traitement à la réception','s','1 → 7',['7 → 1','1 → 7']],['q7','Le port source change à chaque essai : port…','s','éphémère',['bien connu','éphémère','réservé']]];
+  $('#cv-tab tbody').innerHTML=ROWS.map(r=>`<tr data-l="${r[0]}"><td style="padding:4px 6px"><span class="lay ${col(r[0])}" style="height:28px;font-size:13.5px;border-radius:14px 4px 4px 14px"><i style="width:22px;height:22px;font-size:13px">${r[0]}</i>${r[1]}</span></td><td style="padding:4px 6px"><select id="cv-p${r[0]}" aria-label="PDU couche ${r[0]}" style="width:100%;padding:5px;font-size:13.5px">${opt(PDU)}</select></td></tr>`).join('');
+  const Q=[['q1','Port de destination TCP avec HTTPS','t','443'],['q2','Port de destination TCP avec HTTP','t','80'],['q3','EtherType de la trame','s','0x0800 (IPv4)',['0x0800 (IPv4)','0x0806 (ARP)','0x86DD (IPv6)']],['q5','Ordre du 3-way handshake','s','SYN → SYN-ACK → ACK',['SYN → SYN-ACK → ACK','SYN → ACK → SYN-ACK','ACK → SYN → FIN']],['q6','Ordre de traitement à la réception','s','1 → 7',['7 → 1','1 → 7']],['q7','Le port source change à chaque essai : port…','s','éphémère',['bien connu','éphémère','réservé']]];
   $('#cv-q').innerHTML=Q.map((q,i)=>`<div style="display:grid;grid-template-columns:1fr 150px;gap:8px;align-items:center;font-size:13.5px"><label for="cv-${q[0]}">${i+1}. ${q[1]}</label>${q[2]==='t'?`<input type="text" id="cv-${q[0]}" style="padding:5px 7px;font-size:13.5px">`:`<select id="cv-${q[0]}" style="padding:5px;font-size:13px">${opt(q[4])}</select>`}</div>`).join('');
-  const ids=[...ROWS.flatMap(r=>['cv-p'+r[0],'cv-h'+r[0],'cv-s'+r[0]]),...Q.map(q=>'cv-'+q[0]),'cv-nom','cv-grp'];
+  const ids=[...ROWS.map(r=>'cv-p'+r[0]),...Q.map(q=>'cv-'+q[0]),'cv-nom','cv-grp'];
   const KEY='osi-td-canevas';
   try{const s=JSON.parse(localStorage.getItem(KEY)||'{}');ids.forEach(id=>{if(s[id]!==undefined)$('#'+id).value=s[id]})}catch(e){}
   const save=()=>{try{const o={};ids.forEach(id=>o[id]=$('#'+id).value);localStorage.setItem(KEY,JSON.stringify(o))}catch(e){}};
@@ -3537,13 +3536,13 @@ ENTER.simCV=()=>{
   const mark=(el,ok)=>{el.style.borderColor=ok?'var(--ok)':'var(--red)';el.style.background=ok?'var(--oksoft)':'var(--rsoft)'};
   const clearMarks=()=>ids.forEach(id=>{const e=$('#'+id);e.style.borderColor='';e.style.background=''});
   $('#cv-chk').onclick=()=>{let g=0,t=0,tg=0,qg=0;
-    ROWS.forEach(r=>{const p=$('#cv-p'+r[0]),h=$('#cv-h'+r[0]),s=$('#cv-s'+r[0]);
-      [[p,p.value===r[2]],[h,h.value===r[3]],[s,norm(s.value)===String(r[4])]].forEach(([e,ok])=>{t++;if(ok){g++;tg++}mark(e,ok)})});
+    ROWS.forEach(r=>{const p=$('#cv-p'+r[0]);
+      [[p,p.value===r[2]]].forEach(([e,ok])=>{t++;if(ok){g++;tg++}mark(e,ok)})});
     Q.forEach(q=>{const e=$('#cv-'+q[0]);const ok=q[2]==='t'?norm(e.value)===norm(q[3]):e.value===q[3];t++;if(ok){g++;qg++}mark(e,ok)});
     const p=Math.round(g/t*100),st=$('#cv-st');st.className='status '+(p>=80?'ok':'wa');
     PROG.td={checked:true,score:g,total:t,sol:!!PROG.tdSol,tab:tg,qq:qg,at:Date.now()};saveProg();st.innerHTML=`<b>${g} / ${t} (${p} %)</b> · ${p>=80?'Atelier validé : vous savez lire l’encapsulation couche par couche.':'Revenez dans le simulateur sur les cases rouges, puis vérifiez à nouveau.'}`};
-  $('#cv-sol').onclick=()=>{PROG.tdSol=true;saveProg();ROWS.forEach(r=>{$('#cv-p'+r[0]).value=r[2];$('#cv-h'+r[0]).value=r[3];$('#cv-s'+r[0]).value=r[4]});Q.forEach(q=>$('#cv-'+q[0]).value=q[3]);save();$('#cv-chk').onclick();
-    const st=$('#cv-st');st.className='status';st.innerHTML='<b>Corrigé affiché</b> pour les réglages du TD. 7 → 142 → 147 → 151 → 171 → 191 → 209 octets : 202 octets d’en-têtes pour 7 octets utiles (3 %).'};
+  $('#cv-sol').onclick=()=>{PROG.tdSol=true;saveProg();ROWS.forEach(r=>{$('#cv-p'+r[0]).value=r[2]});Q.forEach(q=>$('#cv-'+q[0]).value=q[3]);save();$('#cv-chk').onclick();
+    const st=$('#cv-st');st.className='status';st.innerHTML='<b>Corrigé affiché.</b> Données (7-5) → Segment (4) → Paquet (3) → Trame (2) → Bits (1).'};
   $('#cv-clr').onclick=()=>{ids.forEach(id=>{if(id!=='cv-nom'&&id!=='cv-grp')$('#'+id).value=''});clearMarks();save();const st=$('#cv-st');st.className='status';st.textContent='Canevas effacé.'};
   $('#cv-print').onclick=()=>{document.body.classList.add('printcv');try{window.print()}catch(e){}setTimeout(()=>document.body.classList.remove('printcv'),500)};
 };
